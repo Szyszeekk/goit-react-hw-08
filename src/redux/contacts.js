@@ -1,6 +1,19 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import axios from "axios";
 
+const setAuthHeader = (token) => {
+  axios.defaults.headers.common.Authorization = `Bearer ${token}`;
+};
+
+const state = thunkAPI.getState();
+const persistedToken = state.auth.token;
+
+if (!persistedToken) {
+  return thunkAPI.rejectWithValue("No token found");
+}
+
+setAuthHeader(persistedToken);
+
 const API_URL = "https://connections-api.goit.global/";
 
 export const fetchContacts = createAsyncThunk(

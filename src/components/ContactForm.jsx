@@ -1,54 +1,78 @@
-import { useDispatch } from "react-redux";
-import { nanoid } from "nanoid";
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import * as Yup from "yup";
+import { useDispatch, useSelector } from "react-redux";
 import { addContact } from "../redux/contacts";
 import css from "../css/ContactForm.module.css";
 
+const ContactFormSchema = Yup.object().shape({
+  name: Yup.string()
+    .required("Field is required")
+    .min(3, "Minimum length is 3 characters")
+    .max(50, "Maximum length is 50 characters")
+    .matches(/^[A-Za-z\s]+$/, "Name can only contain letters and spaces"),
+  number: Yup.string()
+    .required("Field is required")
+    .min(3, "Minimum length is 3 characters")
+    .max(50, "Maximum length is 50 characters")
+    .matches(/^\d+(-\d+){0,2}$/, "Number can only contain digits and hyphens"),
+});
+
 const ContactForm = () => {
   const dispatch = useDispatch();
+  const error = useSelector((state) => state.contacts.error);
 
-  const Validation = Yup.object().shape({
-    name: Yup.string()
-      .min(3, "Too Short!")
-      .max(50, "Too Long!")
-      .required("Required"),
-    phone: Yup.string()
-      .min(3, "Too Short!")
-      .max(50, "Too Long!")
-      .required("Required"),
-  });
+  const handleAdd = async (values, { resetForm }) => {
+    try {
+      const resultAction = await dispatch(
+        addContact({
+          name: values.name,
+          number: values.number,
+        })
+      );
 
-  const handleSubmit = (values, actions) => {
-    const newContact = {
-      id: nanoid(),
-      name: values.name,
-      phone: values.phone,
-    };
-    dispatch(addContact(newContact));
-    actions.resetForm();
+      if (addContact.fulfilled.match(resultAction)) {
+        console.log("Contact added successfully:", resultAction.payload);
+        resetForm();
+      } else {
+        const errorMessage = resultAction.payload || resultAction.error.message;
+        console.error("Error adding contact:", errorMessage);
+      }
+    } catch (error) {
+      console.error("Error adding contact:", error);
+    }
   };
 
   return (
     <Formik
-      initialValues={{ name: "", phone: "" }}
-      validationSchema={Validation}
-      onSubmit={handleSubmit}>
-      <Form className={css.form}>
-        <div className={css.input}>
-          <label htmlFor="name-id">Name</label>
-          <Field type="text" name="name" id="name-id" />
-          <ErrorMessage name="name" as="span" />
-        </div>
-        <div className={css.input}>
-          <label htmlFor="phone-id">Phone</label>{" "}
-          <Field type="text" name="phone" id="phone-id" />{" "}
-          <ErrorMessage name="phone" as="span" />{" "}
-        </div>
-        <button type="submit" className={css.button}>
-          Add Contact
-        </button>
-      </Form>
+      initialValues={{ name: "", number: "" }}
+      validationSchema={ContactFormSchema}
+      onSubmit={handleAdd}>
+      {() => (
+        <Form className={css.formContainer}>
+          <div className={css.formGroup}>
+            <label>
+              Name
+              <Field type="text" name="name" className={css.input} />
+              <ErrorMessage name="name" component="div" className={css.error} />
+            </label>
+          </div>
+          <div className={css.formGroup}>
+            <label>
+              Number
+              <Field type="tel" name="number" className={css.input} />
+              <ErrorMessage
+                name="number"
+                component="div"
+                className={css.error}
+              />
+            </label>
+          </div>
+          <button type="submit" className={css.button}>
+            Add Contact
+          </button>
+          {error && <div className={css.error}>{error}</div>}{" "}
+        </Form>
+      )}
     </Formik>
   );
 };

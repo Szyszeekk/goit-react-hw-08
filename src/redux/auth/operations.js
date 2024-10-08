@@ -8,6 +8,15 @@ const setAuthHeader = (token) => {
   axios.defaults.headers.common.Authorization = `Bearer ${token}`;
 };
 
+const state = thunkAPI.getState();
+const persistedToken = state.auth.token;
+
+if (!persistedToken) {
+  return thunkAPI.rejectWithValue("No token found");
+}
+
+setAuthHeader(persistedToken);
+
 // Utility to remove JWT
 const clearAuthHeader = () => {
   axios.defaults.headers.common.Authorization = "";
