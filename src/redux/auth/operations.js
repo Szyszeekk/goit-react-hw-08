@@ -20,14 +20,6 @@ const clearAuthHeader = () => {
 export const register = createAsyncThunk(
   "auth/register",
   async (credentials, thunkAPI) => {
-    const state = thunkAPI.getState();
-    const persistedToken = state.auth.token;
-
-    if (!persistedToken) {
-      return thunkAPI.rejectWithValue("No token found");
-    }
-
-    setAuthHeader(persistedToken);
     try {
       const res = await axios.post("/users/signup", credentials);
       setAuthHeader(res.data.token);
@@ -45,14 +37,6 @@ export const register = createAsyncThunk(
 export const logIn = createAsyncThunk(
   "auth/login",
   async (credentials, thunkAPI) => {
-    const state = thunkAPI.getState();
-    const persistedToken = state.auth.token;
-
-    if (!persistedToken) {
-      return thunkAPI.rejectWithValue("No token found");
-    }
-
-    setAuthHeader(persistedToken);
     try {
       const res = await axios.post("/users/login", credentials);
       setAuthHeader(res.data.token);
@@ -68,14 +52,6 @@ export const logIn = createAsyncThunk(
  * headers: Authorization: Bearer token
  */
 export const logOut = createAsyncThunk("auth/logout", async (_, thunkAPI) => {
-  const state = thunkAPI.getState();
-  const persistedToken = state.auth.token;
-
-  if (!persistedToken) {
-    return thunkAPI.rejectWithValue("No token found");
-  }
-
-  setAuthHeader(persistedToken);
   try {
     await axios.post("/users/logout");
     clearAuthHeader();
