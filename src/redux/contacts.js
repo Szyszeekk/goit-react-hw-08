@@ -5,20 +5,19 @@ const setAuthHeader = (token) => {
   axios.defaults.headers.common.Authorization = `Bearer ${token}`;
 };
 
-const state = thunkAPI.getState();
-const persistedToken = state.auth.token;
-
-if (!persistedToken) {
-  return thunkAPI.rejectWithValue("No token found");
-}
-
-setAuthHeader(persistedToken);
-
 const API_URL = "https://connections-api.goit.global/";
 
 export const fetchContacts = createAsyncThunk(
   "contacts/fetchAll",
   async (_, thunkAPI) => {
+    const state = thunkAPI.getState();
+    const persistedToken = state.auth.token;
+
+    if (!persistedToken) {
+      return thunkAPI.rejectWithValue("No token found");
+    }
+
+    setAuthHeader(persistedToken);
     try {
       const response = await axios.get("/contacts");
       return response.data;
@@ -31,6 +30,14 @@ export const fetchContacts = createAsyncThunk(
 export const addContact = createAsyncThunk(
   "contacts/addContact",
   async (newContact, thunkAPI) => {
+    const state = thunkAPI.getState();
+    const persistedToken = state.auth.token;
+
+    if (!persistedToken) {
+      return thunkAPI.rejectWithValue("No token found");
+    }
+
+    setAuthHeader(persistedToken);
     try {
       const response = await axios.post("/contacts", newContact);
       return response.data;
@@ -43,6 +50,14 @@ export const addContact = createAsyncThunk(
 export const deleteContact = createAsyncThunk(
   "contacts/deleteContact",
   async (contactId, thunkAPI) => {
+    const state = thunkAPI.getState();
+    const persistedToken = state.auth.token;
+
+    if (!persistedToken) {
+      return thunkAPI.rejectWithValue("No token found");
+    }
+
+    setAuthHeader(persistedToken);
     try {
       await axios.delete(`/contacts/${contactId}`);
       return contactId;
