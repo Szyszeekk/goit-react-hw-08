@@ -1,13 +1,15 @@
 import { useDispatch } from "react-redux";
 import { register } from "../redux/auth/operations";
+import { useNavigate } from "react-router-dom"; // Import useNavigate
 import css from "../css/RegisterForm.module.css";
 
 const RegisterForm = () => {
   const dispatch = useDispatch();
+  const navigate = useNavigate(); // Inicjalizacja useNavigate
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    const form = e.target;
+    const form = e.currentTarget;
 
     dispatch(
       register({
@@ -15,7 +17,14 @@ const RegisterForm = () => {
         email: form.elements.email.value,
         password: form.elements.password.value,
       })
-    );
+    )
+      .unwrap()
+      .then(() => {
+        navigate("/contacts"); // Przekierowanie po sukcesie
+      })
+      .catch((error) => {
+        console.log("Registration error", error);
+      });
 
     form.reset();
   };
