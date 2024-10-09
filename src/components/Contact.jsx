@@ -1,6 +1,6 @@
 import css from "../css/Contact.module.css";
 
-const Contact = ({ contact, onDeleteContact }) => {
+const Contact = ({ contact, onDeleteContact, onEditContact }) => {
   return (
     <li className={css.listItem}>
       <div>
@@ -11,6 +11,11 @@ const Contact = ({ contact, onDeleteContact }) => {
         onClick={() => onDeleteContact(contact.id)}
         className={css.button}>
         Delete
+      </button>
+      <button
+        onClick={() => onEditContact(contact)} // Przekazujemy cały obiekt kontaktu
+        className={css.button}>
+        Edit
       </button>
     </li>
   );
