@@ -67,6 +67,26 @@ export const deleteContact = createAsyncThunk(
   }
 );
 
+export const updateContact = createAsyncThunk(
+  "contacts/updateContact",
+  async ({ id, updatedContact }, thunkAPI) => {
+    const state = thunkAPI.getState();
+    const persistedToken = state.auth.token;
+
+    if (!persistedToken) {
+      return thunkAPI.rejectWithValue("No token found");
+    }
+
+    setAuthHeader(persistedToken);
+    try {
+      const response = await axios.patch(`/contacts/${id}`, updatedContact);
+      return response.data; // Zwracamy zaktualizowany kontakt
+    } catch (error) {
+      return thunkAPI.rejectWithValue(error.message);
+    }
+  }
+);
+
 const initialState = {
   items: [],
   loading: false,
@@ -114,6 +134,23 @@ const contactsSlice = createSlice({
         );
       })
       .addCase(deleteContact.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+      })
+      .addCase(updateContact.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(updateContact.fulfilled, (state, action) => {
+        state.loading = false;
+        const index = state.items.findIndex(
+          (contact) => contact.id === action.payload.id
+        );
+        if (index !== -1) {
+          state.items[index] = action.payload; // Zaktualizuj kontakt
+        }
+      })
+      .addCase(updateContact.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload;
       });
