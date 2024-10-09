@@ -4,7 +4,8 @@ import Contact from "./Contact";
 import css from "../css/ContactList.module.css";
 import toast, { Toaster } from "react-hot-toast";
 
-const notify = () => toast(`Contact ${contactName} succesfully deleted!`);
+const notify = (contactName) =>
+  toast(`Contact ${contactName} succesfully deleted!`);
 
 const ContactList = () => {
   const dispatch = useDispatch();
@@ -18,7 +19,7 @@ const ContactList = () => {
     );
     if (isConfirmed) {
       dispatch(deleteContact(contactId));
-      notify();
+      notify(contactName);
     }
   };
 
