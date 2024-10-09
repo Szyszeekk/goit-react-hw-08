@@ -2,16 +2,18 @@ import { createSlice } from "@reduxjs/toolkit";
 
 const initialState = {
   name: "",
-  number: "",
+  number: "", // Dodano pole do filtrowania po numerze
 };
 
 const filtersSlice = createSlice({
   name: "filters",
   initialState,
   reducers: {
-    setFilter: (state, action) => {
-      state.name = action.payload.name;
-      state.number = action.payload.number;
+    setNameFilter: (state, action) => {
+      state.name = action.payload;
+    },
+    setNumberFilter: (state, action) => {
+      state.number = action.payload; // Dodano akcję do filtrowania po numerze
     },
   },
 });

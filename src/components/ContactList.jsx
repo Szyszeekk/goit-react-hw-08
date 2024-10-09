@@ -6,15 +6,14 @@ import css from "../css/ContactList.module.css";
 const ContactList = () => {
   const dispatch = useDispatch();
   const contacts = useSelector((state) => state.contacts.items);
-  const { name, number } = useSelector((state) => state.filters);
+  const nameFilter = useSelector((state) => state.filters.name);
+  const numberFilter = useSelector((state) => state.filters.number);
 
-  const filteredContacts = contacts.filter((contact) => {
-    const nameMatch = contact.name.toLowerCase().includes(name.toLowerCase());
-    const numberMatch = contact.number
-      .toLowerCase()
-      .includes(number.toLowerCase());
-    return nameMatch || numberMatch; // Filtruj po nazwie lub numerze
-  });
+  const filteredContacts = contacts.filter(
+    (contact) =>
+      contact.name.toLowerCase().includes(nameFilter.toLowerCase()) &&
+      contact.number.includes(numberFilter) // Filtrowanie po numerze telefonu
+  );
 
   return (
     <ul className={css.list}>

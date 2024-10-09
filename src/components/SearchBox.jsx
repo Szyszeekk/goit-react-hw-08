@@ -1,40 +1,41 @@
 import { useDispatch, useSelector } from "react-redux";
-import { setFilter } from "../redux/filters"; // Importuj setFilter
+import storeConfig from "../redux/store";
 import css from "../css/SearchBox.module.css";
 
 const SearchBox = () => {
   const dispatch = useDispatch();
-  const { name, number } = useSelector((state) => state.filters); // Pobierz oba filtry
-
-  const handleSearchChange = (event) => {
-    dispatch(setFilter({ name, number: event.target.value })); // Uaktualnij tylko numer telefonu
-  };
+  const nameFilter = useSelector((state) => state.filters.name);
+  const numberFilter = useSelector((state) => state.filters.number);
 
   const handleNameChange = (event) => {
-    dispatch(setFilter({ name: event.target.value, number })); // Uaktualnij tylko nazwę
+    dispatch(storeConfig.actions.setNameFilter(event.target.value));
+  };
+
+  const handleNumberChange = (event) => {
+    dispatch(storeConfig.actions.setNumberFilter(event.target.value));
   };
 
   return (
-    <div>
+    <>
       <label>
         <p className={css.paragraph}>Find contacts by name</p>
         <input
           type="text"
-          value={name}
+          value={nameFilter}
           onChange={handleNameChange}
           className={css.input}
         />
       </label>
       <label>
-        <p className={css.paragraph}>Find contacts by phone number</p>
+        <p className={css.paragraph}>Find contacts by number</p>
         <input
           type="text"
-          value={number}
-          onChange={handleSearchChange}
+          value={numberFilter}
+          onChange={handleNumberChange}
           className={css.input}
         />
       </label>
-    </div>
+    </>
   );
 };
 
