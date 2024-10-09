@@ -9,10 +9,19 @@ const ContactList = () => {
   const nameFilter = useSelector((state) => state.filters.name);
   const numberFilter = useSelector((state) => state.filters.number);
 
+  const handleDelete = (contactId, contactName) => {
+    const isConfirmed = window.confirm(
+      `Are you sure you want to delete ${contactName}?`
+    );
+    if (isConfirmed) {
+      dispatch(deleteContact(contactId));
+    }
+  };
+
   const filteredContacts = contacts.filter(
     (contact) =>
       contact.name.toLowerCase().includes(nameFilter.toLowerCase()) &&
-      contact.number.includes(numberFilter) // Filtrowanie po numerze telefonu
+      contact.number.includes(numberFilter)
   );
 
   return (
@@ -21,7 +30,7 @@ const ContactList = () => {
         <Contact
           key={contact.id}
           contact={contact}
-          onDeleteContact={() => dispatch(deleteContact(contact.id))}
+          onDeleteContact={() => handleDelete(contact.id, contact.name)} // Przekazujemy nazwę kontaktu
         />
       ))}
     </ul>
