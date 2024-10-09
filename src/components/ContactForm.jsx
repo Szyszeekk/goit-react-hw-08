@@ -3,6 +3,11 @@ import * as Yup from "yup";
 import { useDispatch, useSelector } from "react-redux";
 import { addContact } from "../redux/contacts";
 import css from "../css/ContactForm.module.css";
+import toast, { Toaster } from "react-hot-toast";
+
+const notify = (contactName) =>
+  toast(`Contact ${contactName} succesfully added!`);
+const notifyError = () => toast("There is a problem with adding this contact");
 
 const ContactFormSchema = Yup.object().shape({
   name: Yup.string()
@@ -32,10 +37,12 @@ const ContactForm = () => {
 
       if (addContact.fulfilled.match(resultAction)) {
         console.log("Contact added successfully:", resultAction.payload);
+        notify(values.name);
         resetForm();
       } else {
         const errorMessage = resultAction.payload || resultAction.error.message;
         console.error("Error adding contact:", errorMessage);
+        notifyError();
       }
     } catch (error) {
       console.error("Error adding contact:", error);

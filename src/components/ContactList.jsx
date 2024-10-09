@@ -2,6 +2,9 @@ import { useDispatch, useSelector } from "react-redux";
 import { deleteContact } from "../redux/contacts";
 import Contact from "./Contact";
 import css from "../css/ContactList.module.css";
+import toast, { Toaster } from "react-hot-toast";
+
+const notify = () => toast(`Contact ${contactName} succesfully deleted!`);
 
 const ContactList = () => {
   const dispatch = useDispatch();
@@ -15,6 +18,7 @@ const ContactList = () => {
     );
     if (isConfirmed) {
       dispatch(deleteContact(contactId));
+      notify();
     }
   };
 
